@@ -127,3 +127,8 @@ spec:
         image: ghcr.io/wasmcloud/sqldb-postgres:0.1.0
         config:
           - name: "default-postgres"
+
+    - name: provider01
+      type: capability
+      properties:
+        image: file:///media/providers/provider01/build/wasmcloud-example-provider01.par.gz

@@ -1,0 +1,6 @@
+name = "provider01"
+language = "rust"
+type = "provider"
+
+[provider]
+vendor = "Example Vendor"
