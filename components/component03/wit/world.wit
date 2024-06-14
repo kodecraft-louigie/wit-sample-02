@@ -1,0 +1,17 @@
+package wasmcloud:hello;
+
+/// Invoke a component and receive string output. Similar to wasi:cli/command.run, without args
+///
+/// This enables the component to be used with `wash call`
+interface invoke {
+    /// Invoke a component
+    call: func() -> string;
+}
+
+world hello {
+  import wasmcloud:postgres/query@0.1.0-draft;
+  import wasi:logging/logging;
+
+  export wasi:http/incoming-handler@0.2.0;
+  export invoke;
+}

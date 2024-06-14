@@ -1,0 +1,37 @@
+package local:greeter-demo; // <namespace>:<package>
+
+interface greet { // interface <name of interface>
+  greetings: func(message:  sample-struct) -> sample-struct; // a function named "greet"
+
+  record sample-struct {
+    /**
+     * The name of the instrument.
+     */
+    instrument-name: string,
+
+    /**
+     * The ask implied volatility.
+     */
+    ask-iv: f64,
+
+    /**
+     * The best ask amount.
+     */
+    best-ask-amount: f64,
+
+    /**
+     * The best ask price.
+     */
+    best-ask-price: f64,
+
+    /**
+     * The bid implied volatility.
+     */
+    bid-iv: f64,
+  }
+
+}
+
+world greeter {
+  export greet; // make the `greet` function available to other components/the runtime
+}

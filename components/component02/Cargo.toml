@@ -1,0 +1,10 @@
+[package]
+name = "component02"
+edition = "2021"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wit-bindgen = { version = "0.24", features = ["default"] }

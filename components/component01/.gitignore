@@ -1,0 +1,7 @@
+# Rust build artifacts
+Cargo.lock
+wit-deps
+
+# Wash build artifacts
+build/
+target/

@@ -1,0 +1,129 @@
+apiVersion: core.oam.dev/v1beta1
+kind: Application
+metadata:
+  name: sample-app
+  annotations:
+    version: v0.0.1
+    description: "HTTP hello world demo in Rust, using the WebAssembly Component Model and WebAssembly Interfaces Types (WIT)"
+spec:
+  components:
+ 
+# ******************** COMPONENTS ********************  
+    # - name: component01
+    #   type: component
+    #   properties:
+    #     image: file:///media/components/component01/build/component01_s.wasm
+    #   traits:
+    #     # Govern the spread/scheduling of the component
+    #     - type: spreadscaler
+    #       properties:
+    #         replicas: 1
+    #     - type: link
+    #       properties:
+    #         target: component02
+    #         namespace: local
+    #         package: greeter-demo
+    #         interfaces: [greet]
+    #     - type: link
+    #       properties:
+    #         target: nats
+    #         namespace: wasmcloud
+    #         package: messaging
+    #         interfaces: [consumer]
+    #         target_config:
+    #           - name: custom-uri
+    #             properties:
+    #               cluster_uris: nats:4222
+    #               #cluster_uris: 127.0.0.1:4222
+           
+    # - name: component02
+    #   type: component
+    #   properties:
+    #     image: file:///media/components/component02/build/component02_s.wasm
+    #   traits:
+    #     # Govern the spread/scheduling of the component
+    #     - type: spreadscaler
+    #       properties:
+    #         replicas: 1
+
+    - name: component03
+      type: component
+      properties:
+        image: file:///media/components/component03/build/component03_s.wasm
+      traits:
+        # Govern the spread/scheduling of the component
+        - type: spreadscaler
+          properties:
+            replicas: 1
+        - type: link
+          properties:
+            target: sqldb-postgres
+            namespace: wasmcloud
+            package: postgres
+            interfaces: [query]
+            target_config:
+              - name: default-postgres
+
+# ******************** PROVIDERS ********************
+    # Add a capability provider that enables HTTP access
+    # - name: httpserver01
+    #   type: capability
+    #   properties:
+    #     image: ghcr.io/wasmcloud/http-server:0.20.0
+    #   traits:
+    #     # Link the httpserver to the component, and configure the HTTP server
+    #     # to listen on port 8080 for incoming requests
+    #     - type: link
+    #       properties:
+    #         target: component01
+    #         namespace: wasi
+    #         package: http
+    #         interfaces: [incoming-handler]
+    #         source_config:
+    #           - name: default-http01
+    #             properties:
+    #               address: 0.0.0.0:8080
+ 
+    - name: httpserver02
+      type: capability
+      properties:
+        image: ghcr.io/wasmcloud/http-server:0.20.0
+      traits:
+        # Link the httpserver to the component, and configure the HTTP server
+        # to listen on port 8080 for incoming requests
+        - type: link
+          properties:
+            target: component03
+            namespace: wasi
+            package: http
+            interfaces: [incoming-handler]
+            source_config:
+              - name: default-http02
+                properties:
+                  address: 0.0.0.0:8081
+
+    # Add a capability provider that implements `wasmcloud:messaging` using NATS
+    # - name: nats
+    #   type: capability
+    #   properties:
+    #     image: ghcr.io/wasmcloud/messaging-nats:canary
+    #   traits:
+    #     - type: link
+    #       properties:
+    #         target: component01
+    #         namespace: wasmcloud
+    #         package: messaging
+    #         interfaces: [handler]
+    #         source_config:
+    #           - name: simple-subscription
+    #             properties:
+    #               subscriptions: wasmcloud.component01
+    #               cluster_uris: nats:4222
+    #               #cluster_uris: 127.0.0.1:4222
+    
+    - name: sqldb-postgres
+      type: capability
+      properties:
+        image: ghcr.io/wasmcloud/sqldb-postgres:0.1.0
+        config:
+          - name: "default-postgres"

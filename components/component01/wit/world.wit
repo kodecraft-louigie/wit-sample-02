@@ -1,0 +1,10 @@
+package wasmcloud:hello;
+
+world hello {
+  import local:greeter-demo/greet; 
+  import wasi:logging/logging;
+  import wasmcloud:messaging/consumer@0.2.0;
+
+  export wasi:http/incoming-handler@0.2.0;
+  export wasmcloud:messaging/handler@0.2.0;
+}
